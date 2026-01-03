@@ -77,7 +77,7 @@ function App() {
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
       <div className="flex flex-col gap-4 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ Manager</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
         <p className="text-muted-foreground">Manage and open your local repositories in Code Server.</p>
       </div>
       
