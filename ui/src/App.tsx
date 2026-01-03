@@ -94,10 +94,10 @@ function App() {
       {loading ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 max-w-5xl mx-auto">
           {Array.from({ length: 15 }).map((_, i) => (
-             <Card key={i} className="h-26">
-                <CardHeader className="p-3">
-                    <Skeleton className="h-5 w-3/4 mb-2" />
-                    <Skeleton className="h-3 w-full" />
+             <Card key={i} className="h-26 py-0">
+                <CardHeader className="p-4">
+                    <Skeleton className="h-5 w-3/4 mb-1" />
+                    <Skeleton className="h-3 w-1/2" />
                 </CardHeader>
              </Card>
           ))}
@@ -109,7 +109,7 @@ function App() {
             return (
               <Card 
                 key={repo.fullPath} 
-                className="group relative h-26 flex flex-col transition-all hover:shadow-md overflow-hidden"
+                className="group relative h-26 py-0 flex flex-col transition-all hover:shadow-md overflow-hidden"
               >
                 {/* Full card clickable area using <a> */}
                 <a 
@@ -118,24 +118,24 @@ function App() {
                 />
 
                 <CardHeader className="w-full text-left z-10 pointer-events-none flex-grow p-4">
-                  <CardTitle className="truncate text-lg pr-6" title={repo.fullPath}>
+                  <CardTitle className="text-lg pr-6 break-all line-clamp-2" title={repo.fullPath}>
                       {getDisplayName(repo.name)}
                   </CardTitle>
                 </CardHeader>
                 
                 {githubUrl && (
-                  <div className="absolute bottom-1 right-1 z-20">
+                  <div className="absolute bottom-2 right-2 z-20">
                     <a
                       href={githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className={cn(
                         buttonVariants({ variant: "ghost", size: "icon" }),
-                        "h-7 w-7"
+                        "h-9 w-9"
                       )}
                       title="Open on GitHub"
                     >
-                      <Github className="h-3.5 w-3.5" />
+                      <Github className="h-5 w-5" />
                     </a>
                   </div>
                 )}
