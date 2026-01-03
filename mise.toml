@@ -1,0 +1,11 @@
+[tools]
+bun = "latest"
+go = "latest"
+watchexec = "latest"
+
+[tasks."ui:build"]
+run = "cd ui && bun run build"
+
+[tasks.run]
+depends = ["ui:build"]
+run = "go run ."
