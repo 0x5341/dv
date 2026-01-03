@@ -2,20 +2,78 @@ package main
 
 import (
 	"embed"
+	"encoding/json"
 	"io/fs"
 	"log"
 	"net/http"
+	"os/exec"
+	"strings"
 )
 
 //go:embed ui/dist
 var rootfs embed.FS
 
+type Repo struct {
+	Name     string `json:"name"`
+	FullPath string `json:"fullPath"`
+}
+
+func getRepos() ([]Repo, error) {
+	cmdName := exec.Command("ghq", "list")
+	outName, err := cmdName.Output()
+	if err != nil {
+		return nil, err
+	}
+	names := strings.Split(strings.TrimSpace(string(outName)), "\n")
+
+	cmdPath := exec.Command("ghq", "list", "--full-path")
+	outPath, err := cmdPath.Output()
+	if err != nil {
+		return nil, err
+	}
+	paths := strings.Split(strings.TrimSpace(string(outPath)), "\n")
+
+	var repos []Repo
+	count := len(names)
+	if len(paths) < count {
+		count = len(paths)
+	}
+
+	for i := 0; i < count; i++ {
+		if names[i] == "" {
+			continue
+		}
+		repos = append(repos, Repo{
+			Name:     names[i],
+			FullPath: paths[i],
+		})
+	}
+	return repos, nil
+}
+
+func apiReposHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	repos, err := getRepos()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(repos)
+}
+
 func main() {
+	http.HandleFunc("/api/repos", apiReposHandler)
+
 	f, err := fs.Sub(rootfs, "ui/dist")
 	if err != nil {
 		log.Fatal(err)
 	}
 	http.Handle("/", http.FileServer(http.FS(f)))
+
+	log.Println("Server started on :3000")
 	err = http.ListenAndServe(":3000", nil)
 	log.Fatal(err)
 }
