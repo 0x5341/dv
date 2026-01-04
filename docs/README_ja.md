@@ -47,7 +47,7 @@ sudo mv dv-linux-amd64 /usr/local/bin/dv
 
 | 変数名 | 説明 | デフォルト値 |
 |--------|------|-------------|
-| `SERVER_PORT` | Webサーバーのポート | `3000` |
+| `DV_SERVER_PORT` | Webサーバーのポート | `3000` |
 | `DV_CODE_SERVER_URL` | VS Code ServerのURL | `http://localhost:8000` |
 | `DV_CODE_SERVER_TOKEN` | VS Code Serverの認証トークン | - |
 | `DV_VIBE_KANBAN_PORT` | VIBE-KANBAN連携のポート | `4000` |

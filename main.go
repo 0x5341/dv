@@ -113,7 +113,7 @@ func main() {
 	}
 	http.Handle("/", http.FileServer(http.FS(f)))
 
-	port := os.Getenv("SERVER_PORT")
+	port := os.Getenv("DV_SERVER_PORT")
 	if port == "" {
 		port = "3000"
 	}

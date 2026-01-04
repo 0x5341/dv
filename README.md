@@ -47,7 +47,7 @@ sudo mv dv-linux-amd64 /usr/local/bin/dv
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `SERVER_PORT` | Port for the web server | `3000` |
+| `DV_SERVER_PORT` | Port for the web server | `3000` |
 | `DV_CODE_SERVER_URL` | VS Code Server URL | `http://localhost:8000` |
 | `DV_CODE_SERVER_TOKEN` | VS Code Server authentication token | - |
 | `DV_VIBE_KANBAN_PORT` | Port for VIBE-KANBAN integration | `4000` |
