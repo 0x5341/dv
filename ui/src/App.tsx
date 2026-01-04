@@ -50,13 +50,13 @@ function App() {
   const getRepoUrl = (repo: Repo) => {
     const codeServerUrl = import.meta.env.VITE_CODE_SERVER_URL || 'http://localhost:8000'
     const token = import.meta.env.VITE_CODE_SERVER_TOKEN
-    
+
     const url = new URL(codeServerUrl)
     url.searchParams.set('folder', repo.fullPath)
     if (token) {
       url.searchParams.set('tkn', token)
     }
-    
+
     return url.toString()
   }
 
@@ -80,26 +80,26 @@ function App() {
         <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
         <p className="text-muted-foreground">Manage and open your local repositories in Code Server.</p>
       </div>
-      
+
       <div className="max-w-md mx-auto">
-         <Input 
-           type="text" 
-           placeholder="Search repositories (fuzzy)..." 
-           value={search}
-           onChange={(e) => setSearch(e.target.value)}
-           className="w-full"
-         />
+        <Input
+          type="text"
+          placeholder="Search repositories (fuzzy)..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full"
+        />
       </div>
 
       {loading ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 max-w-5xl mx-auto">
           {Array.from({ length: 15 }).map((_, i) => (
-             <Card key={i} className="h-26 py-0">
-                <CardHeader className="p-4">
-                    <Skeleton className="h-5 w-3/4 mb-1" />
-                    <Skeleton className="h-3 w-1/2" />
-                </CardHeader>
-             </Card>
+            <Card key={i} className="h-26 py-0">
+              <CardHeader className="p-4">
+                <Skeleton className="h-5 w-3/4 mb-1" />
+                <Skeleton className="h-3 w-1/2" />
+              </CardHeader>
+            </Card>
           ))}
         </div>
       ) : (
@@ -107,22 +107,22 @@ function App() {
           {filteredRepos.map((repo) => {
             const githubUrl = getGithubUrl(repo.name)
             return (
-              <Card 
-                key={repo.fullPath} 
+              <Card
+                key={repo.fullPath}
                 className="group relative h-26 py-0 flex flex-col transition-all hover:shadow-md overflow-hidden"
               >
                 {/* Full card clickable area using <a> */}
-                <a 
-                   href={getRepoUrl(repo)}
-                   className="absolute inset-0 z-0 hover:bg-accent/50 transition-colors"
+                <a
+                  href={getRepoUrl(repo)}
+                  className="absolute inset-0 z-0 hover:bg-accent/50 transition-colors"
                 />
 
                 <CardHeader className="w-full text-left z-10 pointer-events-none flex-grow p-4">
                   <CardTitle className="text-lg pr-6 break-all line-clamp-2" title={repo.fullPath}>
-                      {getDisplayName(repo.name)}
+                    {getDisplayName(repo.name)}
                   </CardTitle>
                 </CardHeader>
-                
+
                 {githubUrl && (
                   <div className="absolute bottom-2 right-2 z-20">
                     <a
@@ -143,9 +143,9 @@ function App() {
             )
           })}
           {filteredRepos.length === 0 && (
-             <div className="col-span-full text-center text-muted-foreground py-10">
-                 No repositories found matching "{search}"
-             </div>
+            <div className="col-span-full text-center text-muted-foreground py-10">
+              No repositories found matching "{search}"
+            </div>
           )}
         </div>
       )}
