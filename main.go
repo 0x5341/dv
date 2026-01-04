@@ -118,7 +118,12 @@ func main() {
 		port = "3000"
 	}
 
-	log.Printf("Server started on http://localhost:%s", port)
-	err = http.ListenAndServe(":"+port, loggingMiddleware(http.DefaultServeMux))
+	host := os.Getenv("DV_SERVER_HOST")
+	if host == "" {
+		host = "localhost"
+	}
+
+	log.Printf("Server started on http://%s:%s", host, port)
+	err = http.ListenAndServe(host+":"+port, loggingMiddleware(http.DefaultServeMux))
 	log.Fatal(err)
 }
