@@ -75,8 +75,8 @@ func apiCodeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	config := CodeConfig{
-		Url:   os.Getenv("CODE_SERVER_URL"),
-		Token: os.Getenv("CODE_SERVER_TOKEN"),
+		Url:   os.Getenv("DV_CODE_SERVER_URL"),
+		Token: os.Getenv("DV_CODE_SERVER_TOKEN"),
 	}
 
 	json.NewEncoder(w).Encode(config)
@@ -86,9 +86,9 @@ func apiVibeKanbanHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 
-	port := os.Getenv("VIBE_KANBAN_PORT")
+	port := os.Getenv("DV_VIBE_KANBAN_PORT")
 	if port == "" {
-		port = "3001"
+		port = "4000"
 	}
 
 	url := "http://localhost:" + port
@@ -122,4 +122,3 @@ func main() {
 	err = http.ListenAndServe(":"+port, loggingMiddleware(http.DefaultServeMux))
 	log.Fatal(err)
 }
-
