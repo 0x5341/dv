@@ -82,6 +82,19 @@ func apiCodeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(config)
 }
 
+func apiVibeKanbanHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	port := os.Getenv("VIBE_KANBAN_PORT")
+	if port == "" {
+		port = "3001"
+	}
+
+	url := "http://localhost:" + port
+	json.NewEncoder(w).Encode(map[string]string{"url": url})
+}
+
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s %s", r.Method, r.URL.Path)
@@ -92,6 +105,7 @@ func loggingMiddleware(next http.Handler) http.Handler {
 func main() {
 	http.HandleFunc("/api/repos", apiReposHandler)
 	http.HandleFunc("/api/code", apiCodeHandler)
+	http.HandleFunc("/api/vibe-kanban", apiVibeKanbanHandler)
 
 	f, err := fs.Sub(rootfs, "ui/dist")
 	if err != nil {

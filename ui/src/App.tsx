@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { buttonVariants } from "@/components/ui/button"
-import { Github } from "lucide-react"
+import { Github, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface Repo {
@@ -22,20 +22,27 @@ interface CodeConfig {
   token: string
 }
 
+interface VibeKanbanConfig {
+  url: string
+}
+
 function App() {
   const [repos, setRepos] = useState<Repo[]>([])
   const [codeConfig, setCodeConfig] = useState<CodeConfig>({ url: '', token: '' })
+  const [vibeKanbanConfig, setVibeKanbanConfig] = useState<VibeKanbanConfig>({ url: '' })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
     Promise.all([
       fetch('/api/repos').then(res => res.json()),
-      fetch('/api/code').then(res => res.json())
+      fetch('/api/code').then(res => res.json()),
+      fetch('/api/vibe-kanban').then(res => res.json())
     ])
-      .then(([reposData, configData]) => {
+      .then(([reposData, configData, vibeKanbanData]) => {
         setRepos(reposData || [])
         setCodeConfig(configData)
+        setVibeKanbanConfig(vibeKanbanData)
         setLoading(false)
       })
       .catch(err => {
@@ -85,9 +92,25 @@ function App() {
 
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
-      <div className="flex flex-col gap-4 text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
-        <p className="text-muted-foreground">Manage and open your local repositories in Code Server.</p>
+      <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-4 text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
+          <p className="text-muted-foreground">Manage and open your local repositories in Code Server.</p>
+        </div>
+        {vibeKanbanConfig.url && (
+          <a
+            href={vibeKanbanConfig.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              buttonVariants({ variant: "default" }),
+              "flex items-center gap-2"
+            )}
+          >
+            VIBE-KANBAN
+            <ExternalLink className="h-4 w-4" />
+          </a>
+        )}
       </div>
 
       <div className="max-w-md mx-auto">
