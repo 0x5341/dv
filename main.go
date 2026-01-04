@@ -92,7 +92,12 @@ func main() {
 	}
 	http.Handle("/", http.FileServer(http.FS(f)))
 
-	log.Println("Server started on :3000")
-	err = http.ListenAndServe(":3000", nil)
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	log.Printf("Server started on :%s", port)
+	err = http.ListenAndServe(":"+port, nil)
 	log.Fatal(err)
 }
