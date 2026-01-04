@@ -92,11 +92,9 @@ function App() {
 
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col gap-4 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
-          <p className="text-muted-foreground">Manage and open your local repositories in Code Server.</p>
-        </div>
+      <div className="flex flex-col items-center gap-6 text-center relative">
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
+        <p className="text-muted-foreground max-w-2xl">Manage and open your local repositories in Code Server.</p>
         {vibeKanbanConfig.url && (
           <a
             href={vibeKanbanConfig.url}
@@ -104,7 +102,7 @@ function App() {
             rel="noopener noreferrer"
             className={cn(
               buttonVariants({ variant: "default" }),
-              "flex items-center gap-2"
+              "flex items-center gap-2 absolute top-0 right-0"
             )}
           >
             VIBE-KANBAN
