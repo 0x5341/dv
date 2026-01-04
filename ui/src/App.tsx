@@ -93,8 +93,8 @@ function App() {
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
       <div className="flex flex-col items-center gap-6 text-center relative">
-        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">GHQ MANAGER</h1>
-        <p className="text-muted-foreground max-w-2xl">Manage and open your local repositories in Code Server.</p>
+        <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl">DV</h1>
+        <p className="text-muted-foreground max-w-2xl">Manage Dev Environment & Launch Web Apps</p>
         {vibeKanbanConfig.url && (
           <a
             href={vibeKanbanConfig.url}
