@@ -17,16 +17,25 @@ interface Repo {
   fullPath: string
 }
 
+interface CodeConfig {
+  url: string
+  token: string
+}
+
 function App() {
   const [repos, setRepos] = useState<Repo[]>([])
+  const [codeConfig, setCodeConfig] = useState<CodeConfig>({ url: '', token: '' })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    fetch('/api/repos')
-      .then(res => res.json())
-      .then(data => {
-        setRepos(data || [])
+    Promise.all([
+      fetch('/api/repos').then(res => res.json()),
+      fetch('/api/code').then(res => res.json())
+    ])
+      .then(([reposData, configData]) => {
+        setRepos(reposData || [])
+        setCodeConfig(configData)
         setLoading(false)
       })
       .catch(err => {
@@ -48,8 +57,8 @@ function App() {
   }, [repos, search, fuse])
 
   const getRepoUrl = (repo: Repo) => {
-    const codeServerUrl = import.meta.env.VITE_CODE_SERVER_URL || 'http://localhost:8000'
-    const token = import.meta.env.VITE_CODE_SERVER_TOKEN
+    const codeServerUrl = codeConfig.url || 'http://localhost:8000'
+    const token = codeConfig.token
 
     const url = new URL(codeServerUrl)
     url.searchParams.set('folder', repo.fullPath)

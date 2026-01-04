@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -16,6 +17,11 @@ var rootfs embed.FS
 type Repo struct {
 	Name     string `json:"name"`
 	FullPath string `json:"fullPath"`
+}
+
+type CodeConfig struct {
+	Url   string `json:"url"`
+	Token string `json:"token"`
 }
 
 func getRepos() ([]Repo, error) {
@@ -64,8 +70,21 @@ func apiReposHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(repos)
 }
 
+func apiCodeHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	config := CodeConfig{
+		Url:   os.Getenv("CODE_SERVER_URL"),
+		Token: os.Getenv("CODE_SERVER_TOKEN"),
+	}
+
+	json.NewEncoder(w).Encode(config)
+}
+
 func main() {
 	http.HandleFunc("/api/repos", apiReposHandler)
+	http.HandleFunc("/api/code", apiCodeHandler)
 
 	f, err := fs.Sub(rootfs, "ui/dist")
 	if err != nil {
