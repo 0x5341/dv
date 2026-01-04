@@ -82,6 +82,13 @@ func apiCodeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(config)
 }
 
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	http.HandleFunc("/api/repos", apiReposHandler)
 	http.HandleFunc("/api/code", apiCodeHandler)
@@ -97,7 +104,8 @@ func main() {
 		port = "3000"
 	}
 
-	log.Printf("Server started on :%s", port)
-	err = http.ListenAndServe(":"+port, nil)
+	log.Printf("Server started on http://localhost:%s", port)
+	err = http.ListenAndServe(":"+port, loggingMiddleware(http.DefaultServeMux))
 	log.Fatal(err)
 }
+
