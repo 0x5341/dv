@@ -9,3 +9,10 @@ run = "cd ui && bun run build"
 [tasks.run]
 depends = ["ui:build"]
 run = "go run ."
+
+[tasks.build]
+depends = ["ui:build"]
+usage = """
+arg <output> default=dv
+"""
+run = "go build -ldflags=\"-s -w\" -trimpath -o ${usage_output?} ."
