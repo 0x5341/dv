@@ -52,6 +52,8 @@ sudo mv dv-linux-amd64 /usr/local/bin/dv
 | `DV_CODE_SERVER_URL` | VS Code Server URL | `http://localhost:8000` |
 | `DV_CODE_SERVER_TOKEN` | VS Code Server authentication token | - |
 | `DV_VIBE_KANBAN_URL` | URL for VIBE-KANBAN integration | `http://localhost:4000` |
+| `DV_GHQ_ROOT` | Root directory for ghq repositories (GHQ_ROOT) | (system default) |
+| `DV_GHQ_PATH` | Path to ghq executable | `ghq` |
 
 ## Development
 
