@@ -1,9 +1,10 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import Fuse from 'fuse.js'
 import './App.css'
 import { Header } from "@/components/Header"
 import { SearchBar } from "@/components/SearchBar"
 import { RepoList } from "@/components/RepoList"
+import { AddRepoDialog } from "@/components/AddRepoDialog"
 import type { Repo, CodeConfig, VibeKanbanConfig } from "@/types"
 
 function App() {
@@ -12,6 +13,13 @@ function App() {
   const [vibeKanbanConfig, setVibeKanbanConfig] = useState<VibeKanbanConfig>({ url: '' })
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+
+  const fetchRepos = useCallback(() => {
+    fetch('/api/repos')
+      .then(res => res.json())
+      .then(data => setRepos(data || []))
+      .catch(console.error)
+  }, [])
 
   useEffect(() => {
     Promise.all([
@@ -46,7 +54,12 @@ function App() {
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
       <Header vibeKanbanUrl={vibeKanbanConfig.url} />
-      <SearchBar search={search} setSearch={setSearch} />
+      <div className="flex justify-center gap-4 max-w-xl mx-auto w-full">
+        <div className="flex-1">
+          <SearchBar search={search} setSearch={setSearch} />
+        </div>
+        <AddRepoDialog onRepoAdded={fetchRepos} />
+      </div>
       <RepoList 
         loading={loading} 
         filteredRepos={filteredRepos} 

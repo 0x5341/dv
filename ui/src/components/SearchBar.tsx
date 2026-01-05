@@ -7,7 +7,7 @@ interface SearchBarProps {
 
 export function SearchBar({ search, setSearch }: SearchBarProps) {
   return (
-    <div className="max-w-md mx-auto">
+    <div className="w-full">
       <Input
         type="text"
         placeholder="Search repositories (fuzzy)..."
