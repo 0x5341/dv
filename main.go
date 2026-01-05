@@ -98,12 +98,11 @@ func apiVibeKanbanHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 
-	port := os.Getenv("DV_VIBE_KANBAN_PORT")
-	if port == "" {
-		port = "4000"
+	url := os.Getenv("DV_VIBE_KANBAN_URL")
+	if url == "" {
+		url = "http://localhost:4000"
 	}
 
-	url := "http://localhost:" + port
 	json.NewEncoder(w).Encode(map[string]string{"url": url})
 }
 

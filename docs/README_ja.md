@@ -51,7 +51,7 @@ sudo mv dv-linux-amd64 /usr/local/bin/dv
 | `DV_SERVER_HOST` | Webサーバーのホスト | `localhost` |
 | `DV_CODE_SERVER_URL` | VS Code ServerのURL | `http://localhost:8000` |
 | `DV_CODE_SERVER_TOKEN` | VS Code Serverの認証トークン | - |
-| `DV_VIBE_KANBAN_PORT` | VIBE-KANBAN連携のポート | `4000` |
+| `DV_VIBE_KANBAN_URL` | VIBE-KANBAN連携のURL | `http://localhost:4000` |
 
 ## 開発
 
