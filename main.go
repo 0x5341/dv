@@ -24,15 +24,27 @@ type CodeConfig struct {
 	Token string `json:"token"`
 }
 
+func ghqCommand(args ...string) *exec.Cmd {
+	ghqPath := os.Getenv("DV_GHQ_PATH")
+	if ghqPath == "" {
+		ghqPath = "ghq"
+	}
+	cmd := exec.Command(ghqPath, args...)
+	if root := os.Getenv("DV_GHQ_ROOT"); root != "" {
+		cmd.Env = append(os.Environ(), "GHQ_ROOT="+root)
+	}
+	return cmd
+}
+
 func getRepos() ([]Repo, error) {
-	cmdName := exec.Command("ghq", "list")
+	cmdName := ghqCommand("list")
 	outName, err := cmdName.Output()
 	if err != nil {
 		return nil, err
 	}
 	names := strings.Split(strings.TrimSpace(string(outName)), "\n")
 
-	cmdPath := exec.Command("ghq", "list", "--full-path")
+	cmdPath := ghqCommand("list", "--full-path")
 	outPath, err := cmdPath.Output()
 	if err != nil {
 		return nil, err
