@@ -64,7 +64,8 @@ function App() {
         loading={loading} 
         filteredRepos={filteredRepos} 
         search={search} 
-        codeConfig={codeConfig} 
+        codeConfig={codeConfig}
+        onRepoDeleted={fetchRepos}
       />
     </div>
   )

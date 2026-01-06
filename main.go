@@ -24,6 +24,7 @@ func main() {
 	http.HandleFunc("/api/repos", handler.ReposHandler)
 	http.HandleFunc("/api/get", handler.GetHandler)
 	http.HandleFunc("/api/create", handler.CreateHandler)
+	http.HandleFunc("/api/rm", handler.RmHandler)
 	http.HandleFunc("/api/code", handler.CodeHandler)
 	http.HandleFunc("/api/vibe-kanban", handler.VibeKanbanHandler)
 

@@ -8,9 +8,10 @@ interface RepoListProps {
   filteredRepos: Repo[]
   search: string
   codeConfig: CodeConfig
+  onRepoDeleted: () => void
 }
 
-export function RepoList({ loading, filteredRepos, search, codeConfig }: RepoListProps) {
+export function RepoList({ loading, filteredRepos, search, codeConfig, onRepoDeleted }: RepoListProps) {
   if (loading) {
     return (
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 max-w-5xl mx-auto">
@@ -29,7 +30,12 @@ export function RepoList({ loading, filteredRepos, search, codeConfig }: RepoLis
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 max-w-5xl mx-auto">
       {filteredRepos.map((repo) => (
-        <RepoCard key={repo.fullPath} repo={repo} codeConfig={codeConfig} />
+        <RepoCard 
+          key={repo.fullPath} 
+          repo={repo} 
+          codeConfig={codeConfig} 
+          onRepoDeleted={onRepoDeleted}
+        />
       ))}
       {filteredRepos.length === 0 && (
         <div className="col-span-full text-center text-muted-foreground py-10">
