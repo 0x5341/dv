@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
-import { Github, MoreVertical, Trash } from "lucide-react"
+import { Github, MoreVertical, Trash, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import type { Repo, CodeConfig } from "@/types"
+import type { Repo, CodeConfig, RepoStatus } from "@/types"
 
 interface RepoCardProps {
   repo: Repo
@@ -28,6 +28,22 @@ interface RepoCardProps {
 
 export function RepoCard({ repo, codeConfig, onRepoDeleted }: RepoCardProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [repoStatus, setRepoStatus] = useState<RepoStatus | null>(null)
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false)
+
+  useEffect(() => {
+    if (deleteDialogOpen) {
+      setIsLoadingStatus(true)
+      setRepoStatus(null)
+      fetch(`/api/repo/status?path=${encodeURIComponent(repo.fullPath)}`)
+        .then(res => res.json())
+        .then((data: RepoStatus) => {
+          setRepoStatus(data)
+        })
+        .catch(console.error)
+        .finally(() => setIsLoadingStatus(false))
+    }
+  }, [deleteDialogOpen, repo.fullPath])
 
   const getRepoUrl = (repo: Repo) => {
     const codeServerUrl = codeConfig.url || 'http://localhost:8000'
@@ -80,6 +96,13 @@ export function RepoCard({ repo, codeConfig, onRepoDeleted }: RepoCardProps) {
   }
 
   const githubUrl = getGithubUrl(repo.name)
+
+  const hasWarnings = repoStatus && (
+    !repoStatus.is_clean || 
+    repoStatus.has_unpushed_commits || 
+    repoStatus.has_conflicts || 
+    (repoStatus.unmerged_local_branches && repoStatus.unmerged_local_branches.length > 0)
+  )
 
   return (
     <>
@@ -147,12 +170,76 @@ export function RepoCard({ repo, codeConfig, onRepoDeleted }: RepoCardProps) {
       </Card>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
+            {isLoadingStatus && (
+              <div className="text-sm text-muted-foreground mb-4">Checking git status...</div>
+            )}
+            
+            {!isLoadingStatus && hasWarnings && (
+              <div className="bg-destructive/10 text-destructive p-4 pr-12 rounded-md mt-6 mb-4 text-sm border border-destructive/20 relative">
+                <div className="flex items-center gap-2 font-bold mb-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  Warning: Unsaved changes detected
+                </div>
+                <ul className="list-disc list-inside space-y-2">
+                  {repoStatus.uncommitted_files && repoStatus.uncommitted_files.length > 0 && (
+                    <li>
+                      <span className="font-semibold">{repoStatus.uncommitted_files.length} uncommitted file(s)</span>
+                      <ul className="pl-4 mt-1 list-none opacity-80 text-xs">
+                        {repoStatus.uncommitted_files.slice(0, 5).map((f, i) => (
+                          <li key={i} className="truncate">{f}</li>
+                        ))}
+                        {repoStatus.uncommitted_files.length > 5 && (
+                          <li>...and {repoStatus.uncommitted_files.length - 5} more</li>
+                        )}
+                      </ul>
+                    </li>
+                  )}
+                  {repoStatus.has_conflicts && (
+                    <li className="font-semibold">Unmerged conflicts detected</li>
+                  )}
+                  {repoStatus.unmerged_local_branches && repoStatus.unmerged_local_branches.length > 0 && (
+                    <li>
+                      <span className="font-semibold">Unmerged local branches:</span>
+                      <ul className="pl-4 list-disc mt-1 text-xs">
+                        {repoStatus.unmerged_local_branches.map(b => (
+                          <li key={b} className="font-mono">{b}</li>
+                        ))}
+                      </ul>
+                    </li>
+                  )}
+                  {repoStatus.unpushed_commits && repoStatus.unpushed_commits.length > 0 && (
+                    <li>
+                      <span className="font-semibold">Unpushed commits:</span>
+                      <ul className="pl-4 mt-1 space-y-2 text-xs">
+                        {repoStatus.unpushed_commits.map(b => (
+                          <li key={b.branch} className="list-none">
+                            <div className="font-semibold mb-1">On branch {b.branch}:</div>
+                            <ul className="pl-2 border-l-2 border-destructive/30 ml-1 space-y-1">
+                              {b.commits.map(c => (
+                                <li key={c.hash} className="font-mono flex gap-2">
+                                  <span className="opacity-70">{c.hash.substring(0, 7)}</span>
+                                  <span className="truncate">{c.message}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  )}
+                </ul>
+                <p className="mt-3 font-semibold border-t border-destructive/20 pt-2">
+                  These changes will be lost permanently if you delete this repository.
+                </p>
+              </div>
+            )}
+
             <DialogTitle>Are you sure?</DialogTitle>
             <DialogDescription>
               This action cannot be undone. This will permanently delete the repository
-              <span className="font-mono text-xs block mt-2 bg-muted p-1 rounded">
+              <span className="font-mono text-xs block mt-2 bg-muted p-1 rounded break-all">
                 {repo.fullPath}
               </span>
             </DialogDescription>
