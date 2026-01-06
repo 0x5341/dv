@@ -21,12 +21,22 @@ The system SHALL allow users to add repositories from remote sources or create t
 - **THEN** the system sends a request to `POST /api/create` with the repository name.
 
 ### Requirement: Repository Deletion
-The system SHALL allow users to permanently delete a local repository from the filesystem via the UI.
+The system SHALL allow users to permanently delete a local repository from the filesystem via the UI. Before deletion, the system SHALL check for uncommitted changes or unpushed commits and warn the user.
 
 #### Scenario: User initiates deletion
 - **WHEN** the user clicks the "More" menu (three dots) on a repository card
 - **AND** selects the "Delete" option
-- **THEN** a confirmation dialog appears asking "Are you sure you want to delete this repository?".
+- **THEN** a confirmation dialog appears.
+- **AND** the system automatically fetches the Git status of the repository.
+
+#### Scenario: User warns of uncommitted/unpushed/unmerged changes
+- **WHEN** the Git status check reveals uncommitted changes, unpushed commits, or unmerged local branches
+- **THEN** a warning message is displayed in the confirmation dialog, specifically above the "Are you sure?" text.
+- **AND** the warning clearly indicates the presence of:
+  - Uncommitted changes (unstaged/staged files).
+  - Unpushed commits (branch names, commit titles, and hashes).
+  - Unmerged local branches (branch names not merged into the default branch).
+- **AND** the warning states that proceeding with deletion will result in permanent data loss for these items.
 
 #### Scenario: User confirms deletion
 - **WHEN** the user confirms the deletion in the dialog
