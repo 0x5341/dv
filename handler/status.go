@@ -1,12 +1,17 @@
 package handler
 
 import (
+	"bufio"
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/go-git/go-billy/v5"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/format/gitignore"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/storer"
 )
@@ -74,12 +79,32 @@ func getRepoStatus(path string) (*RepoStatus, error) {
 		return nil, err
 	}
 
-	status.IsClean = s.IsClean()
+	// Load gitignore patterns from the root of the worktree.
+	// We ignore the error as .gitignore might not exist.
+	patterns, _ := gitignore.ReadPatterns(w.Filesystem, nil)
+
+	// Load patterns from .git/info/exclude
+	patterns = append(patterns, readPatterns(w.Filesystem, ".git/info/exclude")...)
+
+	// Load global gitignore patterns
+	home, _ := os.UserHomeDir()
+	if home != "" {
+		patterns = append(patterns, readPatternsFromOS(filepath.Join(home, ".config", "git", "ignore"))...)
+		patterns = append(patterns, readPatternsFromOS(filepath.Join(home, ".gitignore"))...)
+	}
+
+	matcher := gitignore.NewMatcher(patterns)
 
 	for path, fileStatus := range s {
 		if fileStatus.Staging == git.Unmodified && fileStatus.Worktree == git.Unmodified {
 			continue
 		}
+
+		// Filter out files that match .gitignore patterns.
+		if matcher.Match(strings.Split(path, "/"), false) {
+			continue
+		}
+
 		status.UncommittedFiles = append(status.UncommittedFiles, path)
 
 		// Check for conflicts
@@ -87,6 +112,8 @@ func getRepoStatus(path string) (*RepoStatus, error) {
 			status.HasConflicts = true
 		}
 	}
+
+	status.IsClean = len(status.UncommittedFiles) == 0 && !status.HasConflicts
 
 	// 2. Unpushed Commits & 3. Unmerged Local Branches
 	branches, err := r.Branches()
@@ -226,4 +253,42 @@ func isAncestor(r *git.Repository, ancestor, descendant plumbing.Hash) (bool, er
 	}
 
 	return aCommit.IsAncestor(dCommit)
+}
+
+func readPatterns(fs billy.Filesystem, path string) []gitignore.Pattern {
+	f, err := fs.Open(path)
+	if err != nil {
+		return nil
+	}
+	defer f.Close()
+
+	var ps []gitignore.Pattern
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
+		ps = append(ps, gitignore.ParsePattern(line, nil))
+	}
+	return ps
+}
+
+func readPatternsFromOS(path string) []gitignore.Pattern {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil
+	}
+	defer f.Close()
+
+	var ps []gitignore.Pattern
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if len(line) == 0 || line[0] == '#' {
+			continue
+		}
+		ps = append(ps, gitignore.ParsePattern(line, nil))
+	}
+	return ps
 }
