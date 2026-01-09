@@ -5,7 +5,7 @@ import { Header } from "@/components/Header"
 import { SearchBar } from "@/components/SearchBar"
 import { RepoList } from "@/components/RepoList"
 import { AddRepoDialog } from "@/components/AddRepoDialog"
-import type { Repo, CodeConfig, VibeKanbanConfig } from "@/types"
+import type { Repo, CodeConfig, OpenLink } from "@/types"
 
 function App() {
   const [repos, setRepos] = useState<Repo[]>([])
