@@ -85,7 +85,7 @@ go build -o dv .
 
 - `GET /api/repos` - `ghq` からリポジトリリストを返す
 - `GET /api/code` - Code Serverの設定を返す
-- `GET /api/vibe-kanban` - VIBE-KANBANのURL設定を返す
+- `GET /api/open-link-button` - ヘッダーに表示する外部リンク設定を返す（TOMLで設定 + `DV_VIBE_KANBAN_URL` をマージ）
 
 ## アーキテクチャ
 

@@ -85,7 +85,7 @@ go build -o dv .
 
 - `GET /api/repos` - Returns list of repositories from `ghq`
 - `GET /api/code` - Returns Code Server configuration
-- `GET /api/vibe-kanban` - Returns VIBE-KANBAN URL configuration
+- `GET /api/open-link-button` - Returns header external link configuration (TOML-based + merged `DV_VIBE_KANBAN_URL`)
 
 ## Architecture
 
