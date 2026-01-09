@@ -27,7 +27,7 @@ func main() {
 	http.HandleFunc("/api/rm", handler.RmHandler)
 	http.HandleFunc("/api/repo/status", handler.RepoStatusHandler)
 	http.HandleFunc("/api/code", handler.CodeHandler)
-	http.HandleFunc("/api/vibe-kanban", handler.VibeKanbanHandler)
+	http.HandleFunc("/api/open-link-button", handler.OpenLinkButtonHandler)
 
 	f, err := fs.Sub(rootfs, "ui/dist")
 	if err != nil {
@@ -39,6 +39,8 @@ func main() {
 	if port == "" {
 		port = "3000"
 	}
+
+	// Backwards compatible note: /api/vibe-kanban removed in favor of /api/open-link-button
 
 	host := os.Getenv("DV_SERVER_HOST")
 	if host == "" {

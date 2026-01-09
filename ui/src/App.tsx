@@ -5,12 +5,12 @@ import { Header } from "@/components/Header"
 import { SearchBar } from "@/components/SearchBar"
 import { RepoList } from "@/components/RepoList"
 import { AddRepoDialog } from "@/components/AddRepoDialog"
-import type { Repo, CodeConfig, VibeKanbanConfig } from "@/types"
+import type { Repo, CodeConfig, OpenLink } from "@/types"
 
 function App() {
   const [repos, setRepos] = useState<Repo[]>([])
   const [codeConfig, setCodeConfig] = useState<CodeConfig>({ url: '', token: '' })
-  const [vibeKanbanConfig, setVibeKanbanConfig] = useState<VibeKanbanConfig>({ url: '' })
+  const [openLinks, setOpenLinks] = useState<OpenLink[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
@@ -25,12 +25,12 @@ function App() {
     Promise.all([
       fetch('/api/repos').then(res => res.json()),
       fetch('/api/code').then(res => res.json()),
-      fetch('/api/vibe-kanban').then(res => res.json())
+      fetch('/api/open-link-button').then(res => res.json())
     ])
-      .then(([reposData, configData, vibeKanbanData]) => {
+      .then(([reposData, configData, openLinksData]) => {
         setRepos(reposData || [])
         setCodeConfig(configData)
-        setVibeKanbanConfig(vibeKanbanData)
+        setOpenLinks(openLinksData || [])
         setLoading(false)
       })
       .catch(err => {
@@ -53,7 +53,7 @@ function App() {
 
   return (
     <div className="container mx-auto p-8 min-h-screen space-y-8">
-      <Header vibeKanbanUrl={vibeKanbanConfig.url} />
+      <Header openLinks={openLinks} />
       <div className="flex justify-center gap-4 max-w-xl mx-auto w-full">
         <div className="flex-1">
           <SearchBar search={search} setSearch={setSearch} />
