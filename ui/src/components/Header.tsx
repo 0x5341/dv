@@ -1,6 +1,7 @@
 import { buttonVariants } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
+import type { OpenLink } from "@/types"
 
 interface HeaderProps {
   openLinks: OpenLink[]
