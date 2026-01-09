@@ -3,6 +3,7 @@ module github.com/0x5341/dv
 go 1.25.5
 
 require (
+	github.com/BurntSushi/toml v1.6.0
 	github.com/go-git/go-billy/v5 v5.6.2
 	github.com/go-git/go-git/v5 v5.16.4
 )
