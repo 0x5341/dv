@@ -8,7 +8,8 @@ export interface CodeConfig {
   token: string
 }
 
-export interface VibeKanbanConfig {
+export interface OpenLink {
+  name: string
   url: string
 }
 
